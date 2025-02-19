@@ -1,6 +1,11 @@
 # RSCT 
 Random Server CLI Thingy provides an easy interface for users to mess around with the I/O modules :)
 
+## Getting Started
+Run this to install all dependencies uwu:
+```bash
+$ poetry install
+```
 
 ##  Examples
 1. List all available I/O modules:
