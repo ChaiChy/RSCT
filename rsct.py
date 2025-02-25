@@ -32,11 +32,11 @@ def print_modules_in_table(list_of_modules):
 rsct = typer.Typer()
 
 @rsct.command()
-def ls_modules(target_vid :int=0xf00d, target_pid: int=0xbabe):
+def ls_modules():
     print_modules_in_table(get_modules())
 
 @rsct.command()
-def write_do(serial_id: str, do_state: str):
+def write_do(serial_id: int, do_state: str):
     do_state_int = int(do_state, 0)
     if do_state_int > 1023 or do_state_int < 0:
         print("DO state must have a value between 0 and 1023!")
@@ -48,10 +48,10 @@ def write_do(serial_id: str, do_state: str):
         return 
     
     for module in available_modules:
-        if module["serial_id"] == serial_id:
+        if int(module["serial_id"]) == serial_id:
             try: 
                 transceiver = serial.Serial(module["comport"], 115200)
-                transceiver.write(packetizer.digital_out_packet_config(do_state_int))
+                transceiver.write(packetizer.digital_out_set_state(serial_id, do_state_int))
             except serial.SerialException as e:
                 print(f"Failed to open or write to {module['comport']}: {e}")
 
@@ -60,6 +60,30 @@ def write_do(serial_id: str, do_state: str):
             return
     
     print(f"No module with serial id: {serial_id} present ):")
+
+@rsct.command()
+def read_do(serial_id: int):
+    
+    available_modules = get_modules()
+
+    if len(available_modules) == 0:
+        print(f"No module present ): ")
+        return 
+    
+    for module in available_modules:
+        if int(module["serial_id"]) == serial_id:
+            try: 
+                transceiver = serial.Serial(module["comport"], 115200)
+                transceiver.write(packetizer.digital_out_read_state(serial_id))
+            except serial.SerialException as e:
+                print(f"Failed to open or write to {module['comport']}: {e}")
+
+            response = transceiver.readline().decode().strip()
+            print(f"Received: {response}")
+            return
+    
+    print(f"No module with serial id: {serial_id} present ):")
+
 
 if __name__ == "__main__":
     rsct()
