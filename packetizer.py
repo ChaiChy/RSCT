@@ -2,7 +2,7 @@ import struct
 
 def digital_out_set_state(serial_id: int, digital_out_state: int):
     """
-    Take a number between 0 and 1023 and pack it as a struct byte object.
+    Take a number between 0 and 1023 and pack it with a specified serial id as a struct byte object.
     :param bools: integer between 0 and 1023.
     :return: A 16-bit integer (0 to 65535) representing those booleans.
     """
